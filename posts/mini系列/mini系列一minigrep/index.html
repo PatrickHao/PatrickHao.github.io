@@ -1,0 +1,135 @@
+<!doctype html><html lang=en dir=auto><head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><meta name=robots content="index, follow"><title>mini系列（一）minigrep | Patrick Blog</title>
+<meta name=keywords content><meta name=description content="
+😀 一个使用rust实现的非常简单的grep
+
+这块刚接触rust，基本照着https://github.com/sunface/rust-course中的示例在实现，感谢作者的rust教程
+Intro
+一个简单的rust工程构件和运行示例，rust环境的安装非常简单，这里贴一下rust文档以备不时之需。在安装rust之后， cargo 是一个比较常用的工具， cargo 是rust的包管理工具，可以方便快捷的构建和管理rust工程和项目。
+这篇主要简单的记录一下初次构建和运行rust项目的过程，rust的相关语法在https://github.com/sunface/rust-course中介绍的非常详细，初步接触下来感觉生命周期是rust中比较复杂的内容，但是rust带来的内存安全的提升、好用便捷的包管理工具、相比golang优美的错误处理等都感觉非常不错，希望rust的生态可以快快起来🦀
+创建minigrep
+使用一下指令可以创建一个新的rust项目，rust项目包含两种，默认的是二进制可执行文件项目，在创建时加上选项 --lib 可以创建新的库项目，此时默认会带上单元测试部分的代码。
+cargo new minigrep
+项目的主要结构如下
+
+Cargo.lock 用于锁定项目依赖的具体版本，确保构建的一致性
+Cargo.toml 是项目的配置文件，用于管理项目依赖、元数据等
+src/main.rs 则是二进制项目的入口点，定义了程序开始执行的 main 函数
+
+.
+├── Cargo.lock
+├── Cargo.toml
+└── src
+    └── main.rs
+构建和运行项目可以使用一下指令
+# 构建项目
+cargo build
+
+# 运行项目
+cargo run
+
+# 运行单元测试
+cargo test
+另外当工程比较大，编译比较耗时的时候，还可以使用以下工具（在写C++时一条make一杯咖啡的时代终于要远去了）
+# 快速检查代码能否通过编译
+cargo check
+单元测试
+这里记录一下将单元测试与代码实现分开的办法，在项目目录下创建 tests 目录，为了比较方案的管理各个测试文件，可以创建 mod.rs 引入相关的测试模块。
+pub mod test_minigrep;
+在 tests 目录下创建 test_minigrep.rs 文件，用于组织minigrep相关的测试样例，然后使用 cargo 测试即可
+#[cfg(test)]
+mod test {
+  use minigrep::*;
+
+  #[test]
+  fn test_cast1() {
+    // ...
+  }
+}
+"><meta name=author content="patrickhao"><link rel=canonical href=https://patrickhao.github.io/posts/mini%E7%B3%BB%E5%88%97/mini%E7%B3%BB%E5%88%97%E4%B8%80minigrep/><meta name=google-site-verification content="XYZabc"><meta name=yandex-verification content="XYZabc"><meta name=msvalidate.01 content="XYZabc"><link crossorigin=anonymous href=/assets/css/stylesheet.d6fcd20a4fb86efa4dfac8ec95da60244cc8871042183da1ef28e3a762ad79c8.css integrity="sha256-1vzSCk+4bvpN+sjsldpgJEzIhxBCGD2h7yjjp2Ktecg=" rel="preload stylesheet" as=style><link rel=icon href=https://patrickhao.github.io/favicon.ico><link rel=icon type=image/png sizes=16x16 href=https://patrickhao.github.io/favicon-16x16.png><link rel=icon type=image/png sizes=32x32 href=https://patrickhao.github.io/favicon-32x32.png><link rel=apple-touch-icon href=https://patrickhao.github.io/apple-touch-icon.png><link rel=mask-icon href=https://patrickhao.github.io/safari-pinned-tab.svg><meta name=theme-color content="#2e2e33"><meta name=msapplication-TileColor content="#2e2e33"><link rel=alternate hreflang=en href=https://patrickhao.github.io/posts/mini%E7%B3%BB%E5%88%97/mini%E7%B3%BB%E5%88%97%E4%B8%80minigrep/><noscript><style>#theme-toggle,.top-link{display:none}</style><style>@media(prefers-color-scheme:dark){:root{--theme:rgb(29, 30, 32);--entry:rgb(46, 46, 51);--primary:rgb(218, 218, 219);--secondary:rgb(155, 156, 157);--tertiary:rgb(65, 66, 68);--content:rgb(196, 196, 197);--code-block-bg:rgb(46, 46, 51);--code-bg:rgb(55, 56, 62);--border:rgb(51, 51, 51)}.list{background:var(--theme)}.list:not(.dark)::-webkit-scrollbar-track{background:0 0}.list:not(.dark)::-webkit-scrollbar-thumb{border-color:var(--theme)}}</style></noscript><meta property="og:url" content="https://patrickhao.github.io/posts/mini%E7%B3%BB%E5%88%97/mini%E7%B3%BB%E5%88%97%E4%B8%80minigrep/"><meta property="og:site_name" content="Patrick Blog"><meta property="og:title" content="mini系列（一）minigrep"><meta property="og:description" content=" 😀 一个使用rust实现的非常简单的grep
+这块刚接触rust，基本照着https://github.com/sunface/rust-course中的示例在实现，感谢作者的rust教程
+Intro 一个简单的rust工程构件和运行示例，rust环境的安装非常简单，这里贴一下rust文档以备不时之需。在安装rust之后， cargo 是一个比较常用的工具， cargo 是rust的包管理工具，可以方便快捷的构建和管理rust工程和项目。
+这篇主要简单的记录一下初次构建和运行rust项目的过程，rust的相关语法在https://github.com/sunface/rust-course中介绍的非常详细，初步接触下来感觉生命周期是rust中比较复杂的内容，但是rust带来的内存安全的提升、好用便捷的包管理工具、相比golang优美的错误处理等都感觉非常不错，希望rust的生态可以快快起来🦀
+创建minigrep 使用一下指令可以创建一个新的rust项目，rust项目包含两种，默认的是二进制可执行文件项目，在创建时加上选项 --lib 可以创建新的库项目，此时默认会带上单元测试部分的代码。
+cargo new minigrep 项目的主要结构如下
+Cargo.lock 用于锁定项目依赖的具体版本，确保构建的一致性 Cargo.toml 是项目的配置文件，用于管理项目依赖、元数据等 src/main.rs 则是二进制项目的入口点，定义了程序开始执行的 main 函数 . ├── Cargo.lock ├── Cargo.toml └── src └── main.rs 构建和运行项目可以使用一下指令
+# 构建项目 cargo build # 运行项目 cargo run # 运行单元测试 cargo test 另外当工程比较大，编译比较耗时的时候，还可以使用以下工具（在写C++时一条make一杯咖啡的时代终于要远去了）
+# 快速检查代码能否通过编译 cargo check 单元测试 这里记录一下将单元测试与代码实现分开的办法，在项目目录下创建 tests 目录，为了比较方案的管理各个测试文件，可以创建 mod.rs 引入相关的测试模块。
+pub mod test_minigrep; 在 tests 目录下创建 test_minigrep.rs 文件，用于组织minigrep相关的测试样例，然后使用 cargo 测试即可
+#[cfg(test)] mod test { use minigrep::*; #[test] fn test_cast1() { // ... } } "><meta property="og:locale" content="en"><meta property="og:type" content="article"><meta property="article:section" content="posts"><meta property="article:published_time" content="2024-12-04T12:02:32+08:00"><meta property="article:modified_time" content="2024-12-04T12:02:32+08:00"><meta name=twitter:card content="summary"><meta name=twitter:title content="mini系列（一）minigrep"><meta name=twitter:description content="
+😀 一个使用rust实现的非常简单的grep
+
+这块刚接触rust，基本照着https://github.com/sunface/rust-course中的示例在实现，感谢作者的rust教程
+Intro
+一个简单的rust工程构件和运行示例，rust环境的安装非常简单，这里贴一下rust文档以备不时之需。在安装rust之后， cargo 是一个比较常用的工具， cargo 是rust的包管理工具，可以方便快捷的构建和管理rust工程和项目。
+这篇主要简单的记录一下初次构建和运行rust项目的过程，rust的相关语法在https://github.com/sunface/rust-course中介绍的非常详细，初步接触下来感觉生命周期是rust中比较复杂的内容，但是rust带来的内存安全的提升、好用便捷的包管理工具、相比golang优美的错误处理等都感觉非常不错，希望rust的生态可以快快起来🦀
+创建minigrep
+使用一下指令可以创建一个新的rust项目，rust项目包含两种，默认的是二进制可执行文件项目，在创建时加上选项 --lib 可以创建新的库项目，此时默认会带上单元测试部分的代码。
+cargo new minigrep
+项目的主要结构如下
+
+Cargo.lock 用于锁定项目依赖的具体版本，确保构建的一致性
+Cargo.toml 是项目的配置文件，用于管理项目依赖、元数据等
+src/main.rs 则是二进制项目的入口点，定义了程序开始执行的 main 函数
+
+.
+├── Cargo.lock
+├── Cargo.toml
+└── src
+    └── main.rs
+构建和运行项目可以使用一下指令
+# 构建项目
+cargo build
+
+# 运行项目
+cargo run
+
+# 运行单元测试
+cargo test
+另外当工程比较大，编译比较耗时的时候，还可以使用以下工具（在写C++时一条make一杯咖啡的时代终于要远去了）
+# 快速检查代码能否通过编译
+cargo check
+单元测试
+这里记录一下将单元测试与代码实现分开的办法，在项目目录下创建 tests 目录，为了比较方案的管理各个测试文件，可以创建 mod.rs 引入相关的测试模块。
+pub mod test_minigrep;
+在 tests 目录下创建 test_minigrep.rs 文件，用于组织minigrep相关的测试样例，然后使用 cargo 测试即可
+#[cfg(test)]
+mod test {
+  use minigrep::*;
+
+  #[test]
+  fn test_cast1() {
+    // ...
+  }
+}
+"><script type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Posts","item":"https://patrickhao.github.io/posts/"},{"@type":"ListItem","position":2,"name":"mini系列（一）minigrep","item":"https://patrickhao.github.io/posts/mini%E7%B3%BB%E5%88%97/mini%E7%B3%BB%E5%88%97%E4%B8%80minigrep/"}]}</script><script type=application/ld+json>{"@context":"https://schema.org","@type":"BlogPosting","headline":"mini系列（一）minigrep","name":"mini系列（一）minigrep","description":" 😀 一个使用rust实现的非常简单的grep\n这块刚接触rust，基本照着https://github.com/sunface/rust-course中的示例在实现，感谢作者的rust教程\nIntro 一个简单的rust工程构件和运行示例，rust环境的安装非常简单，这里贴一下rust文档以备不时之需。在安装rust之后， cargo 是一个比较常用的工具， cargo 是rust的包管理工具，可以方便快捷的构建和管理rust工程和项目。\n这篇主要简单的记录一下初次构建和运行rust项目的过程，rust的相关语法在https://github.com/sunface/rust-course中介绍的非常详细，初步接触下来感觉生命周期是rust中比较复杂的内容，但是rust带来的内存安全的提升、好用便捷的包管理工具、相比golang优美的错误处理等都感觉非常不错，希望rust的生态可以快快起来🦀\n创建minigrep 使用一下指令可以创建一个新的rust项目，rust项目包含两种，默认的是二进制可执行文件项目，在创建时加上选项 --lib 可以创建新的库项目，此时默认会带上单元测试部分的代码。\ncargo new minigrep 项目的主要结构如下\nCargo.lock 用于锁定项目依赖的具体版本，确保构建的一致性 Cargo.toml 是项目的配置文件，用于管理项目依赖、元数据等 src/main.rs 则是二进制项目的入口点，定义了程序开始执行的 main 函数 . ├── Cargo.lock ├── Cargo.toml └── src └── main.rs 构建和运行项目可以使用一下指令\n# 构建项目 cargo build # 运行项目 cargo run # 运行单元测试 cargo test 另外当工程比较大，编译比较耗时的时候，还可以使用以下工具（在写C++时一条make一杯咖啡的时代终于要远去了）\n# 快速检查代码能否通过编译 cargo check 单元测试 这里记录一下将单元测试与代码实现分开的办法，在项目目录下创建 tests 目录，为了比较方案的管理各个测试文件，可以创建 mod.rs 引入相关的测试模块。\npub mod test_minigrep; 在 tests 目录下创建 test_minigrep.rs 文件，用于组织minigrep相关的测试样例，然后使用 cargo 测试即可\n#[cfg(test)] mod test { use minigrep::*; #[test] fn test_cast1() { // ... } } ","keywords":[],"articleBody":" 😀 一个使用rust实现的非常简单的grep\n这块刚接触rust，基本照着https://github.com/sunface/rust-course中的示例在实现，感谢作者的rust教程\nIntro 一个简单的rust工程构件和运行示例，rust环境的安装非常简单，这里贴一下rust文档以备不时之需。在安装rust之后， cargo 是一个比较常用的工具， cargo 是rust的包管理工具，可以方便快捷的构建和管理rust工程和项目。\n这篇主要简单的记录一下初次构建和运行rust项目的过程，rust的相关语法在https://github.com/sunface/rust-course中介绍的非常详细，初步接触下来感觉生命周期是rust中比较复杂的内容，但是rust带来的内存安全的提升、好用便捷的包管理工具、相比golang优美的错误处理等都感觉非常不错，希望rust的生态可以快快起来🦀\n创建minigrep 使用一下指令可以创建一个新的rust项目，rust项目包含两种，默认的是二进制可执行文件项目，在创建时加上选项 --lib 可以创建新的库项目，此时默认会带上单元测试部分的代码。\ncargo new minigrep 项目的主要结构如下\nCargo.lock 用于锁定项目依赖的具体版本，确保构建的一致性 Cargo.toml 是项目的配置文件，用于管理项目依赖、元数据等 src/main.rs 则是二进制项目的入口点，定义了程序开始执行的 main 函数 . ├── Cargo.lock ├── Cargo.toml └── src └── main.rs 构建和运行项目可以使用一下指令\n# 构建项目 cargo build # 运行项目 cargo run # 运行单元测试 cargo test 另外当工程比较大，编译比较耗时的时候，还可以使用以下工具（在写C++时一条make一杯咖啡的时代终于要远去了）\n# 快速检查代码能否通过编译 cargo check 单元测试 这里记录一下将单元测试与代码实现分开的办法，在项目目录下创建 tests 目录，为了比较方案的管理各个测试文件，可以创建 mod.rs 引入相关的测试模块。\npub mod test_minigrep; 在 tests 目录下创建 test_minigrep.rs 文件，用于组织minigrep相关的测试样例，然后使用 cargo 测试即可\n#[cfg(test)] mod test { use minigrep::*; #[test] fn test_cast1() { // ... } } ","wordCount":"83","inLanguage":"en","datePublished":"2024-12-04T12:02:32+08:00","dateModified":"2024-12-04T12:02:32+08:00","author":{"@type":"Person","name":"patrickhao"},"mainEntityOfPage":{"@type":"WebPage","@id":"https://patrickhao.github.io/posts/mini%E7%B3%BB%E5%88%97/mini%E7%B3%BB%E5%88%97%E4%B8%80minigrep/"},"publisher":{"@type":"Organization","name":"Patrick Blog","logo":{"@type":"ImageObject","url":"https://patrickhao.github.io/favicon.ico"}}}</script></head><body id=top><script>localStorage.getItem("pref-theme")==="dark"?document.body.classList.add("dark"):localStorage.getItem("pref-theme")==="light"?document.body.classList.remove("dark"):window.matchMedia("(prefers-color-scheme: dark)").matches&&document.body.classList.add("dark")</script><header class=header><nav class=nav><div class=logo><a href=https://patrickhao.github.io/ accesskey=h title="Home (Alt + H)"><img src=https://patrickhao.github.io/apple-touch-icon.png alt aria-label=logo height=35>Home</a><div class=logo-switches><button id=theme-toggle accesskey=t title="(Alt + T)"><svg id="moon" width="24" height="18" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg><svg id="sun" width="24" height="18" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button></div></div><ul id=menu><li><a href=https://patrickhao.github.io/categories/ title=categories><span>categories</span></a></li><li><a href=https://patrickhao.github.io/about/ title=about><span>about</span></a></li></ul></nav></header><main class=main><article class=post-single><header class=post-header><div class=breadcrumbs><a href=https://patrickhao.github.io/>Home</a>&nbsp;»&nbsp;<a href=https://patrickhao.github.io/posts/>Posts</a></div><h1 class="post-title entry-hint-parent">mini系列（一）minigrep</h1><div class=post-meta><span title='2024-12-04 12:02:32 +0800 CST'>December 4, 2024</span>&nbsp;·&nbsp;1 min&nbsp;·&nbsp;83 words&nbsp;·&nbsp;patrickhao</div></header><div class=post-content><blockquote><p>😀 一个使用rust实现的非常简单的grep</p></blockquote><p>这块刚接触rust，基本照着https://github.com/sunface/rust-course中的示例在实现，感谢作者的rust教程</p><h1 id=intro>Intro<a hidden class=anchor aria-hidden=true href=#intro>#</a></h1><p>一个简单的rust工程构件和运行示例，rust环境的安装非常简单，这里贴一下<a href=https://www.rust-lang.org/zh-CN>rust文档</a>以备不时之需。在安装rust之后， <code>cargo</code> 是一个比较常用的工具， <code>cargo</code> 是rust的包管理工具，可以方便快捷的构建和管理rust工程和项目。</p><p>这篇主要简单的记录一下初次构建和运行rust项目的过程，rust的相关语法在https://github.com/sunface/rust-course中介绍的非常详细，初步接触下来感觉生命周期是rust中比较复杂的内容，但是rust带来的内存安全的提升、好用便捷的包管理工具、相比golang优美的错误处理等都感觉非常不错，希望rust的生态可以快快起来🦀</p><h1 id=创建minigrep>创建minigrep<a hidden class=anchor aria-hidden=true href=#创建minigrep>#</a></h1><p>使用一下指令可以创建一个新的rust项目，rust项目包含两种，默认的是二进制可执行文件项目，在创建时加上选项 <code>--lib</code> 可以创建新的库项目，此时默认会带上单元测试部分的代码。</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>cargo new minigrep
+</span></span></code></pre></div><p>项目的主要结构如下</p><ul><li>Cargo.lock 用于锁定项目依赖的具体版本，确保构建的一致性</li><li>Cargo.toml 是项目的配置文件，用于管理项目依赖、元数据等</li><li>src/main.rs 则是二进制项目的入口点，定义了程序开始执行的 main 函数</li></ul><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>.
+</span></span><span class=line><span class=cl>├── Cargo.lock
+</span></span><span class=line><span class=cl>├── Cargo.toml
+</span></span><span class=line><span class=cl>└── src
+</span></span><span class=line><span class=cl>    └── main.rs
+</span></span></code></pre></div><p>构建和运行项目可以使用一下指令</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=c1># 构建项目</span>
+</span></span><span class=line><span class=cl>cargo build
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># 运行项目</span>
+</span></span><span class=line><span class=cl>cargo run
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># 运行单元测试</span>
+</span></span><span class=line><span class=cl>cargo <span class=nb>test</span>
+</span></span></code></pre></div><p>另外当工程比较大，编译比较耗时的时候，还可以使用以下工具（在写C++时一条make一杯咖啡的时代终于要远去了）</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=c1># 快速检查代码能否通过编译</span>
+</span></span><span class=line><span class=cl>cargo check
+</span></span></code></pre></div><h1 id=单元测试>单元测试<a hidden class=anchor aria-hidden=true href=#单元测试>#</a></h1><p>这里记录一下将单元测试与代码实现分开的办法，在项目目录下创建 <code>tests</code> 目录，为了比较方案的管理各个测试文件，可以创建 <a href=http://mod.rs><code>mod.rs</code></a> 引入相关的测试模块。</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-rust data-lang=rust><span class=line><span class=cl><span class=k>pub</span><span class=w> </span><span class=k>mod</span> <span class=nn>test_minigrep</span><span class=p>;</span><span class=w>
+</span></span></span></code></pre></div><p>在 <code>tests</code> 目录下创建 <code>test_minigrep.rs</code> 文件，用于组织minigrep相关的测试样例，然后使用 <code>cargo</code> 测试即可</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-rust data-lang=rust><span class=line><span class=cl><span class=cp>#[cfg(test)]</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>mod</span> <span class=nn>test</span><span class=w> </span><span class=p>{</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=k>use</span><span class=w> </span><span class=n>minigrep</span>::<span class=o>*</span><span class=p>;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=cp>#[test]</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=k>fn</span> <span class=nf>test_cast1</span><span class=p>()</span><span class=w> </span><span class=p>{</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=c1>// ...
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=w>  </span><span class=p>}</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>}</span><span class=w>
+</span></span></span></code></pre></div></div><footer class=post-footer><ul class=post-tags></ul><nav class=paginav><a class=prev href=https://patrickhao.github.io/posts/%E6%8A%98%E8%85%BE%E8%AE%B0%E5%BD%95/xmake%E6%8A%98%E8%85%BE%E8%AE%B0%E5%BD%95/><span class=title>« Prev</span><br><span>xmake折腾记录</span>
+</a><a class=next href=https://patrickhao.github.io/posts/tvm%E7%B3%BB%E5%88%97/tvm%E7%B3%BB%E5%88%97%E4%B8%80%E7%AE%80%E5%8D%95%E4%BB%8B%E7%BB%8D/><span class=title>Next »</span><br><span>TVM系列（一）简单介绍</span></a></nav></footer></article></main><footer class=footer><span>&copy; 2024 <a href=https://patrickhao.github.io/>Patrick Blog</a></span> ·
+<span>Powered by
+<a href=https://gohugo.io/ rel="noopener noreferrer" target=_blank>Hugo</a> &
+        <a href=https://github.com/adityatelange/hugo-PaperMod/ rel=noopener target=_blank>PaperMod</a></span></footer><a href=#top aria-label="go to top" title="Go to Top (Alt + G)" class=top-link id=top-link accesskey=g><svg viewBox="0 0 12 6" fill="currentcolor"><path d="M12 6H0l6-6z"/></svg>
+</a><script>let menu=document.getElementById("menu");menu&&(menu.scrollLeft=localStorage.getItem("menu-scroll-position"),menu.onscroll=function(){localStorage.setItem("menu-scroll-position",menu.scrollLeft)}),document.querySelectorAll('a[href^="#"]').forEach(e=>{e.addEventListener("click",function(e){e.preventDefault();var t=this.getAttribute("href").substr(1);window.matchMedia("(prefers-reduced-motion: reduce)").matches?document.querySelector(`[id='${decodeURIComponent(t)}']`).scrollIntoView():document.querySelector(`[id='${decodeURIComponent(t)}']`).scrollIntoView({behavior:"smooth"}),t==="top"?history.replaceState(null,null," "):history.pushState(null,null,`#${t}`)})})</script><script>var mybutton=document.getElementById("top-link");window.onscroll=function(){document.body.scrollTop>800||document.documentElement.scrollTop>800?(mybutton.style.visibility="visible",mybutton.style.opacity="1"):(mybutton.style.visibility="hidden",mybutton.style.opacity="0")}</script><script>document.getElementById("theme-toggle").addEventListener("click",()=>{document.body.className.includes("dark")?(document.body.classList.remove("dark"),localStorage.setItem("pref-theme","light")):(document.body.classList.add("dark"),localStorage.setItem("pref-theme","dark"))})</script></body></html>
